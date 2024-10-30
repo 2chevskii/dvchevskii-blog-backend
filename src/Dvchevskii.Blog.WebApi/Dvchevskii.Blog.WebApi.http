@@ -1,0 +1,6 @@
+@Dvchevskii.Blog.WebApi_HostAddress = http://localhost:3001
+
+GET {{Dvchevskii.Blog.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
