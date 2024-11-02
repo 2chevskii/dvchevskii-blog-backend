@@ -33,6 +33,6 @@ jobs:
           -o UserKnownHostsFile=/dev/null
           ${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_SSH_PORT }}
           "cd ${{ secrets.DEPLOY_PATH }} && docker compose up -d"
-  down:
-    runs-on: ubuntu-22.04
-    environment: development
+  # down:
+  #   runs-on: ubuntu-22.04
+  #   environment: development
