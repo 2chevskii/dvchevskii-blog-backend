@@ -1,0 +1,38 @@
+on: workflow_dispatch
+name: environment deploy (development)
+jobs:
+  up:
+    runs-on: ubuntu-22.04
+    environment: development
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "${{ secrets.RUNNER_SSH_PRIVKEY}}" > ./temp/id_rsa
+      - run: chmod 600 ./temp/id_rsa
+      - run: >-
+          ssh -i ./temp/id_rsa
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+          ${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_SSH_PORT }}
+          "mkdir -p ${{ secrets.DEPLOY_PATH }}"
+      - run: >-
+          scp -i ./temp/id_rsa
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+          "docker-compose.development.yml"
+          "${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_SSH_PORT }}:${{ secrets.DEPLOY_PATH }}/docker-compose.yml"
+      - run: >-
+          for file in $(ls scripts/database); do
+          scp -i ./temp/id_rsa
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+          "$file"
+          "${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_SSH_PORT }}:${{ secrets.DEPLOY_PATH }}/scripts/$file"
+      - run: >-
+          ssh -i ./temp/id_rsa
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+          ${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_SSH_PORT }}
+          "cd ${{ secrets.DEPLOY_PATH }} && docker compose up -d"
+  down:
+    runs-on: ubuntu-22.04
+    environment: development
