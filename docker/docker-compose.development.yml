@@ -1,0 +1,22 @@
+name: "dvchevskii-blog-development"
+services:
+  database:
+    image: mysql:8.4.3
+    ports:
+      - 127.0.0.1:3306:3306/tcp
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: yes
+      DB_ADMIN_PASSWD: ${DB_ADMIN_PASSWD:-admin_passwd}
+    volumes:
+      - type: bind
+        source: ../scripts/mysql
+        target: /docker-entrypoint-initdb.d
+  db_admin:
+    image: phpmyadmin:5.2.1
+    ports:
+      - 127.0.0.1:8080:80/tcp
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+      PMA_USER: admin
+      PMA_PASSWORD: ${DB_ADMIN_PASSWD:-admin_passwd}
