@@ -9,7 +9,7 @@ services:
       DB_ADMIN_PASSWD: ${DB_ADMIN_PASSWD:-admin_passwd}
     volumes:
       - type: bind
-        source: ../scripts/mysql
+        source: ./scripts/database
         target: /docker-entrypoint-initdb.d
   db_admin:
     image: phpmyadmin:5.2.1

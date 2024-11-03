@@ -30,7 +30,7 @@ jobs:
           -o UserKnownHostsFile=/dev/null
           -p ${{ secrets.DEPLOY_SSH_PORT }}
           ${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}
-          "mkdir -p ${{ secrets.DEPLOY_PATH }}"
+          "mkdir -p ${{ secrets.DEPLOY_PATH }} && mkdir -p ${{ secrets.DEPLOY_PATH }}/scripts/database"
       - run: >-
           scp -i ./temp/id_rsa
           -o StrictHostKeyChecking=no
@@ -40,11 +40,12 @@ jobs:
           "${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/docker-compose.yml"
       - run: >-
           for file in $(ls scripts/database); do
+          echo "Copying script $file"
           scp -i ./temp/id_rsa
           -o StrictHostKeyChecking=no
           -o UserKnownHostsFile=/dev/null
           -P ${{ secrets.DEPLOY_SSH_PORT }}
-          "$file"
+          "./scripts/database/$file"
           "${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/scripts/$file"
       - run: >-
           ssh -i ./temp/id_rsa
