@@ -40,13 +40,13 @@ jobs:
           "${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/docker-compose.yml"
       - run: >-
           for file in $(ls scripts/database); do
-          echo "Copying script $file"
+          echo "Copying script $file";
           scp -i ./temp/id_rsa
           -o StrictHostKeyChecking=no
           -o UserKnownHostsFile=/dev/null
           -P ${{ secrets.DEPLOY_SSH_PORT }}
           "./scripts/database/$file"
-          "${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/scripts/$file"
+          "${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/scripts/$file";
           done
       - run: >-
           ssh -i ./temp/id_rsa
