@@ -35,7 +35,7 @@ jobs:
           scp -i ./temp/id_rsa
           -o StrictHostKeyChecking=no
           -o UserKnownHostsFile=/dev/null
-          -p ${{ secrets.DEPLOY_SSH_PORT }}
+          -P ${{ secrets.DEPLOY_SSH_PORT }}
           "./docker/docker-compose.${{ github.event.inputs.environment }}.yml"
           "${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/docker-compose.yml"
       - run: >-
@@ -43,7 +43,7 @@ jobs:
           scp -i ./temp/id_rsa
           -o StrictHostKeyChecking=no
           -o UserKnownHostsFile=/dev/null
-          -p ${{ secrets.DEPLOY_SSH_PORT }}
+          -P ${{ secrets.DEPLOY_SSH_PORT }}
           "$file"
           "${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/scripts/$file"
       - run: >-
