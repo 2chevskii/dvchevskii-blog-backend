@@ -1,0 +1,10 @@
+CREATE USER 'admin' @'%' IDENTIFIED BY '$DB_ADMIN_PASSWD';
+CREATE USER 'webapi_development' @'localhost' IDENTIFIED BY 'webapi_development_passwd';
+GRANT ALL PRIVILEGES ON blog_development.* TO 'admin' @'%';
+GRANT CREATE,
+  ALTER,
+  UPDATE,
+  DELETE,
+  INSERT,
+  INDEX,
+  SELECT ON blog_development.* TO 'webapi_development' @'localhost';
