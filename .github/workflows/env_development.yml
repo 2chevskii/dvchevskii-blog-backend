@@ -1,9 +1,20 @@
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      job:
+        description: "Job name"
+        required: true
+        default: up
+        type: choice
+        options:
+          - up
+          - down
 name: environment deploy (development)
 jobs:
   up:
     runs-on: ubuntu-22.04
     environment: development
+    if: github.event.inputs.job == 'up'
     steps:
       - uses: actions/checkout@v4
       - run: echo "${{ secrets.RUNNER_SSH_PRIVKEY}}" > ./temp/id_rsa
@@ -33,6 +44,17 @@ jobs:
           -o UserKnownHostsFile=/dev/null
           ${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_SSH_PORT }}
           "cd ${{ secrets.DEPLOY_PATH }} && docker compose up -d"
-  # down:
-  #   runs-on: ubuntu-22.04
-  #   environment: development
+  down:
+    runs-on: ubuntu-22.04
+    environment: development
+    if: github.event.inputs.job == 'down'
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "${{ secrets.RUNNER_SSH_PRIVKEY}}" > ./temp/id_rsa
+      - run: chmod 600 ./temp/id_rsa
+      - run: >-
+          ssh -i ./temp/id_rsa
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+          ${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_SSH_PORT }}
+          "cd ${{ secrets.DEPLOY_PATH }} && docker compose down"
