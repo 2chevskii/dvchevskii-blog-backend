@@ -28,26 +28,30 @@ jobs:
           ssh -i ./temp/id_rsa
           -o StrictHostKeyChecking=no
           -o UserKnownHostsFile=/dev/null
-          ${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_SSH_PORT }}
+          -p ${{ secrets.DEPLOY_SSH_PORT }}
+          ${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}
           "mkdir -p ${{ secrets.DEPLOY_PATH }}"
       - run: >-
           scp -i ./temp/id_rsa
           -o StrictHostKeyChecking=no
           -o UserKnownHostsFile=/dev/null
+          -p ${{ secrets.DEPLOY_SSH_PORT }}
           "docker-compose.development.yml"
-          "${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_SSH_PORT }}:${{ secrets.DEPLOY_PATH }}/docker-compose.yml"
+          "${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/docker-compose.yml"
       - run: >-
           for file in $(ls scripts/database); do
           scp -i ./temp/id_rsa
           -o StrictHostKeyChecking=no
           -o UserKnownHostsFile=/dev/null
+          -p ${{ secrets.DEPLOY_SSH_PORT }}
           "$file"
-          "${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_SSH_PORT }}:${{ secrets.DEPLOY_PATH }}/scripts/$file"
+          "${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/scripts/$file"
       - run: >-
           ssh -i ./temp/id_rsa
           -o StrictHostKeyChecking=no
           -o UserKnownHostsFile=/dev/null
-          ${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_SSH_PORT }}
+          -p ${{ secrets.DEPLOY_SSH_PORT }}
+          ${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}
           "cd ${{ secrets.DEPLOY_PATH }} && docker compose up -d"
   down:
     if: github.event.inputs.job == 'down'
@@ -61,5 +65,6 @@ jobs:
           ssh -i ./temp/id_rsa
           -o StrictHostKeyChecking=no
           -o UserKnownHostsFile=/dev/null
-          ${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_SSH_PORT }}
+          -p ${{ secrets.DEPLOY_SSH_PORT }}
+          ${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}
           "cd ${{ secrets.DEPLOY_PATH }} && docker compose down"
