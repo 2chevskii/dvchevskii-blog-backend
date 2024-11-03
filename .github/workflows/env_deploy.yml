@@ -36,7 +36,7 @@ jobs:
           -o StrictHostKeyChecking=no
           -o UserKnownHostsFile=/dev/null
           -p ${{ secrets.DEPLOY_SSH_PORT }}
-          "docker-compose.development.yml"
+          "./docker/docker-compose.${{ github.event.inputs.environment }}.yml"
           "${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/docker-compose.yml"
       - run: >-
           for file in $(ls scripts/database); do
