@@ -47,6 +47,7 @@ jobs:
           -P ${{ secrets.DEPLOY_SSH_PORT }}
           "./scripts/database/$file"
           "${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/scripts/$file"
+          done
       - run: >-
           ssh -i ./temp/id_rsa
           -o StrictHostKeyChecking=no
