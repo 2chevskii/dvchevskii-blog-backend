@@ -21,52 +21,26 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - run: mkdir ./temp
-      - run: echo "${{ secrets.RUNNER_SSH_PRIVKEY }}" > ./temp/id_rsa
-      - run: chmod 600 ./temp/id_rsa
-      - run: >-
-          ssh -i ./temp/id_rsa
-          -o StrictHostKeyChecking=no
-          -o UserKnownHostsFile=/dev/null
-          -p ${{ secrets.DEPLOY_SSH_PORT }}
-          ${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}
-          "mkdir -p ${{ secrets.DEPLOY_PATH }} && mkdir -p ${{ secrets.DEPLOY_PATH }}/scripts/database"
-      - run: >-
-          scp -i ./temp/id_rsa
-          -o StrictHostKeyChecking=no
-          -o UserKnownHostsFile=/dev/null
-          -P ${{ secrets.DEPLOY_SSH_PORT }}
-          "./docker/docker-compose.${{ github.event.inputs.environment }}.yml"
-          "${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/docker-compose.yml"
-      - run: >-
-          for file in $(ls scripts/database); do
-          echo "Copying script $file";
-          scp -i ./temp/id_rsa
-          -o StrictHostKeyChecking=no
-          -o UserKnownHostsFile=/dev/null
-          -P ${{ secrets.DEPLOY_SSH_PORT }}
-          "./scripts/database/$file"
-          "${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/scripts/$file";
-          done
-      - run: >-
-          ssh -i ./temp/id_rsa
-          -o StrictHostKeyChecking=no
-          -o UserKnownHostsFile=/dev/null
-          -p ${{ secrets.DEPLOY_SSH_PORT }}
-          ${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}
-          "cd ${{ secrets.DEPLOY_PATH }} && docker compose up -d"
+      - run: ./scripts/build.sh EnvironmentInit
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_SSH_PORT: ${{ secrets.DEPLOY_SSH_PORT }}
+      DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+      RUNNER_SSH_USER: ${{ secrets.RUNNER_SSH_USER }}
+      RUNNER_SSH_PRIVKEY: ${{ secrets.RUNNER_SSH_PRIVKEY }}
+      DB_ROOT_PASSWD: ${{ secrets.DB_ROOT_PASSWD }}
+      GH_ENVIRONMENT_NAME: ${{ github.event.inputs.environment}}
   down:
     if: github.event.inputs.job == 'down'
     environment: ${{ github.event.inputs.environment }}
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - run: echo "${{ secrets.RUNNER_SSH_PRIVKEY }}" > ./temp/id_rsa
-      - run: chmod 600 ./temp/id_rsa
-      - run: >-
-          ssh -i ./temp/id_rsa
-          -o StrictHostKeyChecking=no
-          -o UserKnownHostsFile=/dev/null
-          -p ${{ secrets.DEPLOY_SSH_PORT }}
-          ${{ secrets.RUNNER_SSH_USER }}@${{ secrets.DEPLOY_HOST }}
-          "cd ${{ secrets.DEPLOY_PATH }} && docker compose down"
+      - run: ./scripts/build.sh EnvironmentShutdown
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_SSH_PORT: ${{ secrets.DEPLOY_SSH_PORT }}
+      DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+      RUNNER_SSH_USER: ${{ secrets.RUNNER_SSH_USER }}
+      RUNNER_SSH_PRIVKEY: ${{ secrets.RUNNER_SSH_PRIVKEY }}
+      GH_ENVIRONMENT_NAME: ${{ github.event.inputs.environment}}

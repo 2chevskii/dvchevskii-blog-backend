@@ -2,17 +2,19 @@ Write-Output 'Creating development SSH tunnels...'
 
 $forwards = @(
   @{
-    local  = 3306
-    remote = 3306
+    name   = 'mysql'
+    local  = 13306
+    remote = 13306
   },
   @{
-    local  = 8080
-    remote = 8080
+    name   = 'phpmyadmin'
+    local  = 13307
+    remote = 13307
   }
 )
 
 $debug_string = $forwards | ForEach-Object {
-  "$($_.local) => $($_.remote)"
+  "[$($_.name)]$($_.local)=>$($_.remote)"
 } | Join-String -Separator ', '
 
 Write-Output "Forwarding ports: $debug_string"

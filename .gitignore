@@ -3,3 +3,4 @@ obj/
 TestResults/
 .idea/
 *.user
+.nuke/temp/

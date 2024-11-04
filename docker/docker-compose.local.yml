@@ -2,12 +2,12 @@ name: dvchevskii-blog-local
 services:
   database:
     image: mysql:8.4.3
-    ports: [3306:3306/tcp]
+    ports: [13306:3306/tcp]
     environment:
       MYSQL_ROOT_PASSWORD: root_passwd
   database_webadmin:
     image: phpmyadmin:5.2.1
-    ports: [3380:80/tcp]
+    ports: [13307:80/tcp]
     environment:
       PMA_HOST: database
       PMA_PORT: 3306
