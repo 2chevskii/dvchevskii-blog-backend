@@ -3,20 +3,19 @@ services:
   database:
     image: mysql:8.4.3
     ports:
-      - 127.0.0.1:3306:3306/tcp
+      - 127.0.0.1:13306:3306/tcp
     environment:
-      MYSQL_RANDOM_ROOT_PASSWORD: yes
-      DB_ADMIN_PASSWD: ${DB_ADMIN_PASSWD:-admin_passwd}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWD:-root_passwd}
     volumes:
       - type: bind
-        source: ./scripts/database
+        source: ${DB_INIT_SCRIPTS_DIR:-../scripts/database}
         target: /docker-entrypoint-initdb.d
   db_admin:
     image: phpmyadmin:5.2.1
     ports:
-      - 127.0.0.1:8080:80/tcp
+      - 127.0.0.1:13307:80/tcp
     environment:
       PMA_HOST: database
       PMA_PORT: 3306
-      PMA_USER: admin
-      PMA_PASSWORD: ${DB_ADMIN_PASSWD:-admin_passwd}
+      PMA_USER: root
+      PMA_PASSWORD: ${DB_ROOT_PASSWD:-root_passwd}
