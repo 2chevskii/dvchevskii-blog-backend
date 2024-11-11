@@ -13,7 +13,7 @@ public class AuthenticationContextSetterMiddleware(
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
         var endpoint = context.GetEndpoint();
-        var endpointMetadata = endpoint!.Metadata.GetMetadata<UseSystemUserAttribute>();
+        var endpointMetadata = endpoint?.Metadata.GetMetadata<UseSystemUserAttribute>();
 
         if (endpointMetadata != null)
         {

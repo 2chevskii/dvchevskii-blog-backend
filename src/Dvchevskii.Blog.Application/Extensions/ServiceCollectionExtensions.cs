@@ -10,6 +10,7 @@ using Dvchevskii.Blog.Application.Infrastructure.Services;
 using Dvchevskii.Blog.Application.Posts;
 using Dvchevskii.Blog.Contracts.Authentication;
 using Dvchevskii.Blog.Contracts.Authentication.Services;
+using Dvchevskii.Blog.Contracts.Authentication.Users;
 using Dvchevskii.Blog.Contracts.Files;
 using Dvchevskii.Blog.Contracts.Infrastructure;
 using Dvchevskii.Blog.Contracts.Posts.Services;
@@ -18,11 +19,12 @@ using Dvchevskii.Blog.Infrastructure.Persistence.DbContexts;
 using Dvchevskii.Blog.Infrastructure.Persistence.Interceptors;
 using Dvchevskii.Blog.Infrastructure.Persistence.SetupHandlers;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using MySqlConnector;
 
 namespace Dvchevskii.Blog.Application.Extensions;
 
@@ -36,6 +38,15 @@ public static class ServiceCollectionExtensions
         {
             var connectionString = serviceProvider.GetRequiredService<IConfiguration>()
                 .GetConnectionString("Database");
+
+            var customDbHost = serviceProvider.GetRequiredService<IConfiguration>()
+                .GetValue<string>("Db_Host");
+
+            if (!string.IsNullOrEmpty(customDbHost))
+            {
+                connectionString += $"Host={customDbHost};";
+            }
+
             if (string.IsNullOrWhiteSpace(connectionString))
             {
                 throw new Exception("Connection string Database was not found");
@@ -45,7 +56,7 @@ public static class ServiceCollectionExtensions
             options.AddInterceptors(auditInfoSetterInterceptor)
                 .UseMySql(
                     connectionString,
-                    new MySqlServerVersion("9.1"),
+                    new MySqlServerVersion("8.4.3"),
                     mysql => mysql.MigrationsAssembly(typeof(BlogDbContext).Assembly.GetName().Name)
                 );
         });
@@ -62,15 +73,6 @@ public static class ServiceCollectionExtensions
         );
 
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.Events = new JwtBearerEvents();
-                options.Events.OnTokenValidated += context =>
-                {
-                    context.Principal = new BlogClaimsPrincipal(context.Principal!);
-                    return Task.CompletedTask;
-                };
-            })
             .AddCookie(options =>
             {
                 options.Events.OnValidatePrincipal += context =>
@@ -82,8 +84,32 @@ public static class ServiceCollectionExtensions
 
                     return Task.CompletedTask;
                 };
+                options.Events.OnRedirectToAccessDenied +=
+                    context => Results.Unauthorized().ExecuteAsync(context.HttpContext);
+                options.Events.OnRedirectToLogin += context => Results.Unauthorized().ExecuteAsync(context.HttpContext);
             });
         services.AddScoped<AuthenticationContextSetterMiddleware>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddApplicationAuthorization(this IServiceCollection services)
+    {
+        services.AddAuthorization(authz =>
+        {
+            authz.AddPolicy("user", p =>
+            {
+                p.RequireAuthenticatedUser()
+                    .RequireRole("user");
+            });
+            authz.AddPolicy("admin", p =>
+            {
+                p.RequireAuthenticatedUser()
+                    .RequireRole("admin");
+            });
+
+            authz.DefaultPolicy = authz.GetPolicy("user")!;
+        });
 
         return services;
     }
@@ -115,6 +141,8 @@ public static class ServiceCollectionExtensions
         services.AddOptions<ImageStorageOptions>().Configure(x => { x.DirectoryName = "BlogImages"; });
 
         services.AddScoped<IPostReaderService, PostReaderService>();
+
+        services.AddScoped<IUserProfileService, UserProfileService>();
 
         return services;
     }

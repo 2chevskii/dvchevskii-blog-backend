@@ -1,6 +1,6 @@
 ﻿using Dvchevskii.Blog.Core.Common;
 
-namespace Dvchevskii.Blog.Core.Content.Files;
+namespace Dvchevskii.Blog.Core.Files;
 
 public class Image : EntityBase
 {

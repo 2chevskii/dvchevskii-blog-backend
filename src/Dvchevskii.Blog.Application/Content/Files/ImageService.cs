@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Dvchevskii.Blog.Contracts.Files;
-using Dvchevskii.Blog.Core.Content.Files;
+using Dvchevskii.Blog.Core.Files;
 using Dvchevskii.Blog.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +11,8 @@ public class ImageService(
     BlogDbContext dbContext,
     IConfigurationProvider mapperConfigurationProvider,
     IMapper mapper,
-    ImageStorage imageStorage) : IImageService
+    ImageStorage imageStorage
+) : IImageService
 {
     public async Task<ImageDto> Get(int id)
     {
@@ -20,6 +21,12 @@ public class ImageService(
 
         return imageDto;
     }
+
+    public Task<bool> Exists(int id)
+    {
+        return dbContext.Images.AnyAsync(x => x.Id == id);
+    }
+
 
     public async Task<ImageDto> Upload(Stream contentStream, string filename)
     {

@@ -1,17 +1,10 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-using AutoMapper;
-using Dvchevskii.Blog.Application.Authentication;
+﻿using AutoMapper;
 using Dvchevskii.Blog.Application.Extensions;
 using Dvchevskii.Blog.Contracts.Authentication;
 using Dvchevskii.Blog.Contracts.Authentication.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Dvchevskii.Blog.WebApi.Auth;
 

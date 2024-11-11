@@ -1,5 +1,4 @@
 ﻿using Dvchevskii.Blog.Contracts.Authentication;
-using Dvchevskii.Blog.Contracts.Authentication.Services;
 using Dvchevskii.Blog.Core.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -29,35 +28,39 @@ public class EntityAuditInfoSetterInterceptor(
             throw new Exception("Authentication context is not authenticated");
         }
 
-        eventData.Context.ChangeTracker.Entries<EntityBase>()
+        eventData.Context.ChangeTracker.Entries<AuditInfo>()
             .Where(entry => entry.State == EntityState.Added)
             .ToList()
             .ForEach(entry =>
             {
-                entry.Entity.EnsureAuditInfoCreated();
-                entry.Entity.AuditInfo.CreatedAtUtc = currentDateTimeUtc;
-                entry.Entity.AuditInfo.CreatedById = authenticationContext.UserId.Value;
+                entry.Entity.CreatedAtUtc = currentDateTimeUtc;
+                entry.Entity.CreatedById = authenticationContext.UserId.Value;
             });
 
-        eventData.Context.ChangeTracker.Entries<EntityBase>()
+        eventData.Context.ChangeTracker.Entries<AuditInfo>()
             .Where(entry => entry.State == EntityState.Modified)
             .ToList()
             .ForEach(entry =>
             {
-                entry.Entity.AuditInfo.UpdatedAtUtc = currentDateTimeUtc;
-                entry.Entity.AuditInfo.UpdatedById = authenticationContext.UserId.Value;
+                entry.Entity.UpdatedAtUtc = currentDateTimeUtc;
+                entry.Entity.UpdatedById = authenticationContext.UserId.Value;
             });
 
-        eventData.Context.ChangeTracker.Entries<EntityBase>()
+        eventData.Context.ChangeTracker.Entries<AuditInfo>()
             .Where(entry => entry.State == EntityState.Deleted)
             .ToList()
             .ForEach(entry =>
             {
                 /*soft-deleting*/
                 entry.State = EntityState.Modified;
-                entry.Entity.AuditInfo.DeletedAtUtc = currentDateTimeUtc;
-                entry.Entity.AuditInfo.DeletedById = authenticationContext.UserId.Value;
+                entry.Entity.DeletedAtUtc = currentDateTimeUtc;
+                entry.Entity.DeletedById = authenticationContext.UserId.Value;
             });
+
+        eventData.Context.ChangeTracker.Entries<EntityBase>()
+            .Where(entry => entry.State == EntityState.Deleted)
+            .ToList()
+            .ForEach(entry => entry.State = EntityState.Unchanged);
 
         return base.SavingChangesAsync(eventData, result, cancellationToken);
     }

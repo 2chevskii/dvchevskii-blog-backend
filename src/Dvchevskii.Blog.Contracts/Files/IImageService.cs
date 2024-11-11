@@ -3,6 +3,7 @@
 public interface IImageService
 {
     Task<ImageDto> Get(int id);
+    Task<bool> Exists(int id);
     Task<ImageDto> Upload(Stream contentStream, string filename);
     Task<Stream> Download(int id);
 }

@@ -22,7 +22,8 @@ builder.Services
     .AddApplicationServices()
     .AddAdminServices()
     .AddUtilities()
-    .AddApplicationAuthentication();
+    .AddApplicationAuthentication()
+    .AddApplicationAuthorization();
 
 builder.Services.AddHttpContextAccessor();
 

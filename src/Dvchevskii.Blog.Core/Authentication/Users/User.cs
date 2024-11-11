@@ -1,4 +1,5 @@
 ﻿using Dvchevskii.Blog.Core.Common;
+using Dvchevskii.Blog.Core.Files;
 
 namespace Dvchevskii.Blog.Core.Authentication.Users;
 
@@ -8,4 +9,6 @@ public class User : EntityBase
     public byte[] PasswordHash { get; set; }
     public bool IsAdmin { get; set; }
     public string? PrimaryEmail { get; set; }
+    public int? AvatarId { get; set; }
+    public Image? Avatar { get; set; }
 }

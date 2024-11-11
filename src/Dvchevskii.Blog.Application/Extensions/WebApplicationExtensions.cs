@@ -1,8 +1,4 @@
-﻿using System.Reflection;
-using Dvchevskii.Blog.Contracts.Authentication;
-using Dvchevskii.Blog.Contracts.Authentication.Services;
-using Dvchevskii.Blog.Contracts.Infrastructure;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;

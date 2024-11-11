@@ -9,6 +9,15 @@
         "ASPNETCORE_ENVIRONMENT": "Local"
       }
     },
+    "local_development": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:3001",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DB_HOST": "localhost"
+      }
+    },
     "development": {
       "commandName": "Project",
       "dotnetRunMessages": true,

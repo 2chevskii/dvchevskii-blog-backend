@@ -1,20 +1,16 @@
 ﻿using Dvchevskii.Blog.Core.Authentication.Users;
 using Dvchevskii.Blog.Core.Common;
-using Dvchevskii.Blog.Core.Content.Files;
-using Dvchevskii.Blog.Core.Content.Posts;
+using Dvchevskii.Blog.Core.Files;
+using Dvchevskii.Blog.Core.Posts;
 using Microsoft.EntityFrameworkCore;
 
 namespace Dvchevskii.Blog.Infrastructure.Persistence.DbContexts;
 
-public class BlogDbContext : DbContext
+public class BlogDbContext(DbContextOptions<BlogDbContext> options) : DbContext(options)
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Post> Posts { get; set; }
     public DbSet<Image> Images { get; set; }
-
-    public BlogDbContext(DbContextOptions<BlogDbContext> options) : base(options)
-    {
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

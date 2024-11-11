@@ -8,12 +8,7 @@ public class BlogClaimsPrincipal(ClaimsPrincipal claimsPrincipal) : ClaimsPrinci
     public int UserId { get; } = int.Parse(claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier)!);
     public string Username { get; } = claimsPrincipal.FindFirstValue(ClaimTypes.Name)!;
 
-    public bool IsAdmin { get; } = claimsPrincipal.FindFirstValue(ClaimTypes.Role) switch
-    {
-        "admin" => true,
-        "user" => false,
-        _ => throw new Exception("Unknown role"),
-    };
+    public bool IsAdmin { get; } = claimsPrincipal.HasClaim(ClaimTypes.Role, "admin");
 
     public static BlogClaimsPrincipal Create(int userId, string username, bool isAdmin, string authenticationType)
     {

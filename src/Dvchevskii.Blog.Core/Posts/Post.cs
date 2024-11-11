@@ -1,7 +1,7 @@
 ﻿using Dvchevskii.Blog.Core.Common;
-using Dvchevskii.Blog.Core.Content.Files;
+using Dvchevskii.Blog.Core.Files;
 
-namespace Dvchevskii.Blog.Core.Content.Posts;
+namespace Dvchevskii.Blog.Core.Posts;
 
 public class Post : EntityBase
 {

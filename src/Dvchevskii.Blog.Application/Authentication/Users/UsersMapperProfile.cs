@@ -14,7 +14,9 @@ public class UsersMapperProfile : Profile
         CreateMap<CreateUserDto, User>()
             .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
             .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.AuditInfo, opt => opt.Ignore());
+            .ForMember(dest => dest.AuditInfo, opt => opt.Ignore())
+            .ForMember(dest => dest.Avatar, opt => opt.Ignore())
+            .ForMember(dest => dest.AvatarId, opt => opt.Ignore());
         CreateMap<User, UserDto>();
     }
 }

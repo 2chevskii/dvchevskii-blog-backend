@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Dvchevskii.Blog.Contracts.Posts.Entities;
-using Dvchevskii.Blog.Core.Content.Posts;
+using Dvchevskii.Blog.Core.Posts;
 
 namespace Dvchevskii.Blog.Application.Posts;
 

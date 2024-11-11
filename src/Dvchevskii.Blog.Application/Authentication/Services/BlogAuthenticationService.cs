@@ -83,8 +83,13 @@ public class BlogAuthenticationService(
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Username),
             /*new Claim(ClaimTypes.Email, user.PrimaryEmail),*/
-            new Claim(ClaimTypes.Role, user.IsAdmin ? "admin" : "user"),
+            new Claim(ClaimTypes.Role, "user"),
         };
+
+        if (user.IsAdmin)
+        {
+            claimsList.Add(new Claim(ClaimTypes.Role, "admin"));
+        }
 
         var identity = new ClaimsIdentity(
             claimsList,
@@ -95,7 +100,7 @@ public class BlogAuthenticationService(
 
         var claimsPrincipal = new ClaimsPrincipal(identity);
 
-        return ValueTask.FromResult(claimsPrincipal);
+        return ValueTask.FromResult<ClaimsPrincipal>(new BlogClaimsPrincipal(claimsPrincipal));
     }
 
     private static bool IsEmail(string login)

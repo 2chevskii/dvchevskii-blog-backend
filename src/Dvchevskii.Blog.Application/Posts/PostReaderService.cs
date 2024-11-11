@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Dvchevskii.Blog.Contracts.Authentication;
-using Dvchevskii.Blog.Contracts.Posts;
 using Dvchevskii.Blog.Contracts.Posts.Entities;
 using Dvchevskii.Blog.Contracts.Posts.Services;
 using Dvchevskii.Blog.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Dvchevskii.Blog.Application.Posts;
 
